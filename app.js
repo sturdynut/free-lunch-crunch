@@ -14,6 +14,7 @@ app.use(minify({
   cache: false
 }));
 app.use(morgan('dev'));
+app.use(express.static(__dirname));
 
 app.get('/raw.js', function(req, res) {
   var js = fs.readFileSync('./raw.js');
