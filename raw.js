@@ -17,8 +17,8 @@
     // END GIVEN
 
     var tempDocument = document;
-    var indexCookieNameEq = indexCookieName + '=';
-    var cookieArray = tempDocument.cookie.split(';');
+    var indexCookieRegex = new RegExp(indexCookieName);
+    var indexCookieValueRegex = new RegExp(indexCookieName + '=(.*?)(?:;|$)');
     var cookieCurrentDropIndex;
 
     // ** set cookies **
@@ -29,21 +29,12 @@
       }
     }
 
+    if (indexCookieRegex.test(tempDocument.cookie)) {
+      cookieCurrentDropIndex = tempDocument.cookie.match(indexCookieValueRegex)[1];
+    }
+
     // ** drop zee pixels **
     if(pixels.length) {
-      // find the indexCookie by name and set cookieCurrentDropIndex
-      for(var n = 0; n < cookieArray.length; n++) {
-        var cookie = cookieArray[n];
-
-        while(cookie.charAt(0) === ' ') {
-          cookie = cookie.substring(1, cookie.length);
-        }
-
-        if(cookie.indexOf(indexCookieNameEq) === 0) {
-          cookieCurrentDropIndex = cookie.substring(indexCookieNameEq.length, cookie.length);
-        }
-      }
-
       // determine next drop index to use
       var nextDropIndex = (cookieCurrentDropIndex && !isNaN(cookieCurrentDropIndex)) ? parseInt(cookieCurrentDropIndex, 10) + 1 : 0;
 
