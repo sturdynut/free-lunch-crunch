@@ -16,47 +16,26 @@
     var maxDrops = 5;
     // END GIVEN
 
-    var tempDocument = document;
-    var indexCookieRegex = new RegExp(indexCookieName + '=(.*?)(?:;|$)');
-    var cookieCurrentDropIndex;
+    var imgs = '', i = 0, indexCookieRegex = new RegExp(indexCookieName + '=(.*?)(?:;|$)');
 
     // ** set cookies **
-    if(cookies.length) {
-      for(var i = 0; i < cookies.length; i++) {
-        // write each cookie
-        tempDocument.cookie = cookies[i].name + '=' + cookies[i].value + ';max-age=' + cookies[i].maxAge;
-      }
-    }
-
-    if (indexCookieRegex.test(tempDocument.cookie)) {
-      cookieCurrentDropIndex = tempDocument.cookie.match(indexCookieRegex)[1];
+    for(i = 0; i < cookies.length; i++) {
+      // write each cookie
+      document.cookie = cookies[i].name + '=' + cookies[i].value + ';max-age=' + cookies[i].maxAge;
     }
 
     // ** drop zee pixels **
-    if(pixels.length) {
-      // determine next drop index to use
-      var nextDropIndex = (cookieCurrentDropIndex && !isNaN(cookieCurrentDropIndex)) ? parseInt(cookieCurrentDropIndex, 10) + 1 : 0;
+    // determine next drop index to use
+    var nextDropIndex = indexCookieRegex.test(document.cookie) ? parseInt(document.cookie.match(indexCookieRegex)[1]) + 1 : 0;
+    // if the next drop index is within the array
+    pixels = pixels.slice(nextDropIndex, (nextDropIndex + maxDrops < pixels.length ? nextDropIndex + maxDrops : pixels.length));
 
-      // if the next drop index is within the array
-      if(pixels.length > nextDropIndex) {
-        var lastIndexDropped = 0;
-        var stopIndex = nextDropIndex + maxDrops < pixels.length ? nextDropIndex + maxDrops : pixels.length;
-        var div = tempDocument.createElement('div');
+    var pixelsLength = pixels.length;
+    if (pixelsLength === 0) { return }
 
-        div.style.display = 'none';
-
-        for(var m = nextDropIndex; m < stopIndex; m++) {
-          var singlePixel = tempDocument.createElement('img');
-
-          singlePixel.src = pixels[m];
-          div.appendChild(singlePixel);
-          lastIndexDropped = m;
-        }
-
-        document.body.appendChild(div);
-        // write the indexCookie
-        tempDocument.cookie = indexCookieName + '=' + lastIndexDropped;
-      }
+    document.cookie = indexCookieName + '=' + (pixelsLength - 1);
+    while(pixelsLength--) {
+      document.body.insertAdjacentHTML('beforeend', "<img style='display:none' src='_x_' />".replace(/_x_/, pixels[pixelsLength]));
     }
   });
 })();
