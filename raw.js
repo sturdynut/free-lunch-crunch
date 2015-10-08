@@ -17,8 +17,7 @@
     // END GIVEN
 
     var tempDocument = document;
-    var indexCookieRegex = new RegExp(indexCookieName);
-    var indexCookieValueRegex = new RegExp(indexCookieName + '=(.*?)(?:;|$)');
+    var indexCookieRegex = new RegExp(indexCookieName + '=(.*?)(?:;|$)');
     var cookieCurrentDropIndex;
 
     // ** set cookies **
@@ -30,7 +29,7 @@
     }
 
     if (indexCookieRegex.test(tempDocument.cookie)) {
-      cookieCurrentDropIndex = tempDocument.cookie.match(indexCookieValueRegex)[1];
+      cookieCurrentDropIndex = tempDocument.cookie.match(indexCookieRegex)[1];
     }
 
     // ** drop zee pixels **
