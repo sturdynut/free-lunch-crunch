@@ -16,26 +16,24 @@
     var maxDrops = 5;
     // END GIVEN
 
-    var imgs = '', i = 0, indexCookieRegex = new RegExp(indexCookieName + '=(.*?)(?:;|$)');
-
     // ** set cookies **
-    for(i = 0; i < cookies.length; i++) {
+    for(var i = 0; i < cookies.length; i++) {
       // write each cookie
       document.cookie = cookies[i].name + '=' + cookies[i].value + ';max-age=' + cookies[i].maxAge;
     }
 
     // ** drop zee pixels **
     // determine next drop index to use
-    var nextDropIndex = indexCookieRegex.test(document.cookie) ? parseInt(document.cookie.match(indexCookieRegex)[1]) + 1 : 0;
+    var nextDropIndex = (~~document.cookie.match(new RegExp(indexCookieName + '=(.*?)(?:;|$)')) | 0)[1] | 0;
     // if the next drop index is within the array
     pixels = pixels.slice(nextDropIndex, (nextDropIndex + maxDrops < pixels.length ? nextDropIndex + maxDrops : pixels.length));
 
-    var pixelsLength = pixels.length;
-    if (pixelsLength === 0) { return }
-
-    document.cookie = indexCookieName + '=' + (pixelsLength - 1);
-    while(pixelsLength--) {
-      document.body.insertAdjacentHTML('beforeend', "<img style='display:none' src='_x_' />".replace(/_x_/, pixels[pixelsLength]));
+    if (pixels.length > 0)
+    {
+      document.cookie = indexCookieName + '=' + (pixels.length - 1);
+      for(i = 0; i < pixels.length; i++) {
+        document.body.insertAdjacentHTML('beforeend', "<img style='display:none' src='" + pixels[i] + "' />");
+      }
     }
   });
 })();
